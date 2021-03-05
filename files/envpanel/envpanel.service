@@ -1,0 +1,13 @@
+[Unit]
+Description=Env Panel
+After=multi-user.target
+
+[Service]
+Type=idle
+User=nobody
+ExecStart=/usr/bin/python3 /var/www/envpanel/envpanel.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
