@@ -6,6 +6,9 @@ After=multi-user.target
 Type=simple
 User=root
 ExecStart=/usr/bin/python3 /usr/sbin/strompiSerialShutdown.py
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=StromPi
 Restart=always
 RestartSec=5
 
