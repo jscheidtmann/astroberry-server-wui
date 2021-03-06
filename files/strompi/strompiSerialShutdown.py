@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import serial
 import os
+import sys
 ##############################################################################
 # Wait this time before the Raspberry PI is shutdown, after powerloss of the 
 # primary power source is detected.
@@ -28,6 +29,8 @@ ser = serial.Serial(
 
 # Statistics
 counter=0
+
+print("StromPi service listening on /dev/serial0", file=sys.stderr)
 
 t = 0 # Count Down to timeout.
 while True:
