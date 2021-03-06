@@ -9,6 +9,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/files/astroberry.version.cmake ${CMAK
 
 set(CONFIG_INSTALL_DIR "/etc")
 set(WWW_INSTALL_DIR "/var/www")
+set(SBIN_DIR "/usr/sbin")
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/files/astroberry DESTINATION ${CONFIG_INSTALL_DIR}/nginx/sites-available)
@@ -22,6 +23,8 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/files/novnc DESTINATION ${WWW_INSTALL_DIR})
         install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/files/gpspanel/gpspanel.service DESTINATION ${CONFIG_INSTALL_DIR}/systemd/system)
         install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/files/astropanel/astropanel.service DESTINATION ${CONFIG_INSTALL_DIR}/systemd/system)
+	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/files/strompi/strompiSerialShutdown.py DESTINATION ${SBIN_DIR})
+	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/files/strompi/strompi.service DESTINATION ${CONFIG_INSTALL_DIR}/systemd/system)		
 	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/files/indiwebmanager/indiwebmanager.service DESTINATION ${CONFIG_INSTALL_DIR}/systemd/system)
         install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/files/novnc/novnc.service DESTINATION ${CONFIG_INSTALL_DIR}/systemd/system)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/astroberry.version DESTINATION ${CONFIG_INSTALL_DIR})
