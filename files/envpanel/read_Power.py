@@ -1,3 +1,9 @@
+# Copyright (C) 2021 Jens Scheidtmann
+# I herewith put this file into public domain
+
+# run this file using:
+# $ python3 read_Power.py
+
 from ina260.controller import Controller
 
 # Read Voltage and Current readings from hte ina260 board, that is connected via I2C to your RaspPi
