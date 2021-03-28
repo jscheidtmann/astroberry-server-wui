@@ -14,7 +14,7 @@
 # Library General Public License for more details.
 #
 # You should have received a copy of the GNU Library General Public License
-# along with this library; see the file COPYING.LIB.  If not, write to
+# along with this library; see the file LICENSE.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
@@ -35,8 +35,22 @@ thread = None
 
 
 def background_thread():
-	""" Read environmental sensor from I2C bus, a BME280 is expected """
-	for new_data in gpsd_socket:
+	""" Read environmental data every 5 seconds. 
+
+	The minimally read sensors are : 
+	- CPU usage
+	- memory usage
+	- network usage
+	- CPU & GPU temperature
+	
+	If further sensors are attached to the I2C bus:
+	- BME280: Environmental temperature, pressure and relative humidity
+	- INA260: Voltage, Current and Power.
+
+	These are 
+	
+	"""
+	for new_data in 
 		if new_data:
 			# TODO: Read output from BME280.
 			pass

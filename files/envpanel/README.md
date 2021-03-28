@@ -1,9 +1,15 @@
 # Environment Panel
 
-Environment Panel is a simple web application to present information from a BME280 server. It depends on a BME280 sensor connected to I2C, and reads environment data from that sensor.
+Environment Panel is a simple web application to present health status information on your Raspberry PI and display information of environmental sensors which are attached to the I2C bus of the RaspPi. 
+
+The supported devices are:
+- An BME280 environmental sensor, reading temperature, pressure and relative humidity.
+- An INA260
 
 
 # Installation
+
+First check that the 
 
 Env Panel is based on [Python Flask](http://flask.pocoo.org/) micro-framework. It has a built-in webserver and by default listens on port 8627. Install the pre-requisites:
 
@@ -43,7 +49,7 @@ RestartSec=5
 WantedBy=multi-user.target
 ```
 
-The above service files assumes you copied the envpanel directory to **DIRECTORY** - replace **DIRECTORY** with real path to gpspanel on your system.
+The above service files assumes you copied the envpanel directory to **DIRECTORY** - replace **DIRECTORY** with real path to envpanel on your system.
 
 Copy the envpanel.service file to **/etc/systemd/system**:
 
