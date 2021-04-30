@@ -10,6 +10,11 @@ import os
 # print(psutil.sensors_fans()) # Empty on Raspi 4
 # print(psutil.loadavg()) # In docs, but throws error
 
-print(psutil.sensors_temperatures())
+info = psutil.sensors_temperatures() 
+print(info)
+print(info['cpu_thermal'][0].current)
 print(psutil.cpu_percent())
-print(os.getloadavg()) # avg number of process in run queue in last 1, 5 and 15 min.
+
+avgs = os.getloadavg()
+print(avgs) # avg number of process in run queue in last 1, 5 and 15 min.
+print(avgs[0])
