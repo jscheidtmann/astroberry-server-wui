@@ -14,6 +14,10 @@ upstream astropanel {
     server 127.0.0.1:8626;
 }
 
+upstream envpanal {
+   server 127.0.0.1:8627;
+}
+
 server {
     listen 80;
 
@@ -136,4 +140,32 @@ server {
       proxy_buffering     off;
     }
 
+    ########### Environment panel block ########## 
+
+    location /envpanel/ {
+       proxy_http_version  1.1;
+       proxy_pass          http://envpanel/;
+       proxy_set_header    Upgrade $http_upgrade;
+       proxy_set_header    Connection "upgrade";
+       proxy_read_timeout  90;
+       proxy_buffering     off;
+    }
+
+    location /envpanel/assets/ {
+       proxy_http_version  1.1;
+       proxy_pass          http://envpanel/assets/;
+       proxy_set_header    Upgrade $http_upgrade;
+       proxy_set_header    Connection "upgrade";
+       proxy_read_timeout 90;
+       proxy_buffering off;
+    }
+
+    location /envpanel/socket.io/ {
+      proxy_http_version  1.1;
+      proxy_pass          http://envpanel/socket.io/;
+      proxy_set_header    Upgrade $http_upgrade;
+      proxy_set_header    Connection "upgrade";
+      proxy_read_timeout  90;
+      proxy_buffering     off;
+    }
 }
