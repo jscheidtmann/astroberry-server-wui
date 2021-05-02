@@ -29,7 +29,7 @@ body {
 }
 
 h1 {
-	background-image: url("./../img/astropanel.svg");
+	background-image: url("./../img/envpanel.svg");
 	background-repeat: no-repeat;
 	background-color: rgb(110, 132, 163);
 	border-radius: 5px;
@@ -85,91 +85,38 @@ table, th, td {
 	font-size: 0.80em;
 }
 
-#polaris, #moon, #sun, #planets {
-	width: 480px;
+#displayctl {
+	align-items: center;
+	justify-content: center;
+}
+
+.graph {
 	margin-top: 10px;
 }
 
-#reticle {
-	width: 280px;
-	background-image:url('../img/reticle.png');
-	background-repeat: no-repeat;
-	background-size: 280px;
-	display:block;
-	overflow:hidden;
-	float: left;
-	margin-right: 10px;
-	margin-left: 10px;
+#power, #environment, #raspi {
+	margin-top: 10px;
 }
 
-#polaris_marker {
-	width: 280px;
-}
-
-.polarishdr {
-	width: 120px;
-}
-
-.polarisdata {
-	text-align: right;
-}
-
-#moon {
-	display:none;
-}
-
-#moon img {
+.powerdata {
 	width: 150px;
-	margin: 50px 20px 0px 0px;
-	float: left;
+	text-align: center;
+	font-family: 'Roboto Light', Arial, Helvetica;
+	font-size: 2.5em;
 }
 
-.moonhdr {
-	width: 180px;
-}
-
-.moondata {
-	text-align: right;
-}
-
-#sun {
-        display:none;
-}
-
-#sun img {
+.envhdr, .raspihdr {
 	width: 150px;
-	margin: 50px 20px 0px 0px;
-	float: left;
-}
-
-.sunhdr {
-	width: 180px;
-}
-
-.sundata {
 	text-align: right;
+	font-family: 'Roboto Light', Arial, Helvetica;
+	font-size: 1.5em;
 }
 
-#planets {
-        display:none;
-}
-
-#planets img {
-	margin-top: 30px;
-}
-
-.planetshdr {
-	width: 80px;
-}
-
-.planetshdrdata {
-	width: 75px;
-	text-align: right;
-	font-weight: bold;
-}
-
-.planetsdata {
-	text-align: right;
+.envvalue, .raspivalue {
+	width: 150px;
+	text-align: center;
+	font-family: 'Roboto Light', Arial, Helvetica;
+	font-size: 1.5em;
 }
 
 .blink {

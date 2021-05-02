@@ -32,17 +32,17 @@
 	var url = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port: '');
 	var socket = io.connect(url, { path: location.pathname + 'socket.io' });
 	socket.on('environdata', function(env) {
-			if (env.temperature) {
-				$("#temperature").attr("src", "data:image/png;base64," + env.temperature);
-			}
-
-			if (env.pressure) {
-				$("#pressure").attr("src", "data:image/png;base64," + env.pressure);
-			}
-
-			if (env.humidity) {
-				$("#humidity").attr("src", "data:image/png;base64," + env.humidity);
-			}
+			$("#powervolts").html(env.v);
+			$("#powercurrent").html(env.c);
+			$("#powerpower").html(env.pow);
+			$("#envtemp").html(env.t);
+			$("#envpressure").html(env.p);
+			$("#envhumidity").html(env.h);
+			$("#raspicpu").html(env.cpu_percent);
+			$("#raspimem").html(env.mem_percent);
+			$("#raspidisk").html(env.disk_percent);
+			$("#raspiload").html(env.loadvals);
+			$("#raspicputemp").html(env.cputempval);
 
 			if (env.voltage) {
 				$("#powvoltage").attr("src", "data:image/png;base64," + env.voltage);
@@ -54,6 +54,18 @@
 
 			if (env.power) {
 				$("#powpower").attr("src", "data:image/png;base64," + env.power);
+			}
+
+			if (env.temperature) {
+				$("#temperature").attr("src", "data:image/png;base64," + env.temperature);
+			}
+
+			if (env.pressure) {
+				$("#pressure").attr("src", "data:image/png;base64," + env.pressure);
+			}
+
+			if (env.humidity) {
+				$("#humidity").attr("src", "data:image/png;base64," + env.humidity);
 			}
 
 			if (env.percents) {
@@ -71,28 +83,53 @@
 	});
     </script>
 </head>
-<body onload="togglepower()">
+<body onload="toggleraspi()">
 	<div class="panel_container">
 		<h1>Environment Information</span></h1>
 		<div id="displayctl">
+			<button id="toggleraspi" onclick="toggleraspi();">Raspberry Pi</button>
 			<button id="togglepower" onclick="togglepower();">Power</button>
 			<button id="toggleenv" onclick="toggleenviron();">Environment</button>
-			<button id="toggleraspi" onclick="toggleraspi();">Raspberry Pi</button>
 		</div>
 		<div id="power">
-			<div><img id="powvoltage" src="assets/img/power.png"/></div>
-			<div><img id="powcurrent" src="assets/img/power.png"/></div>
-			<div><img id="powpower" src="assets/img/power.png"/></div>
+			<div id="powerdisplay">
+				<table>
+					<tr>
+						<td class="powerdata"><span id="powervolts"></span></td>
+						<td class="powerdata"><span id="powercurrent"></span></td>
+						<td class="powerdata"><span id="powerpower"></span></td>
+					</tr>
+				</table>	
+			</div>
+			<div><img class="graph" id="powvoltage" src="assets/img/power.png"/></div>
+			<div><img class="graph" id="powcurrent" src="assets/img/power.png"/></div>
+			<div><img class="graph" id="powpower" src="assets/img/power.png"/></div>
 		</div>
 		<div id="environment">
-			<div><img id="temperature" src="assets/img/environment.png" /></div>
-			<div><img id="pressure" src="assets/img/environment.png" /></div>
-			<div><img id="humidity" src="assets/img/environment.png" /></div>
+			<div id="environmentdisplay">
+				<table>
+				<tr><td class="envhdr">Temperature:</td><td class="envvalue"><span id="envtemp"></span></td></tr>
+				<tr><td class="envhdr">Pressure:</td><td class="envvalue"><span id="envpressure"></span></td></tr>
+				<tr><td class="envhdr">Humidity:</td><td class="envvalue"><span id="envhumidity"></span></td></tr>
+				</table>
+			</div>
+			<div><img class="graph" id="temperature" src="assets/img/environment.png" /></div>
+			<div><img class="graph" id="pressure" src="assets/img/environment.png" /></div>
+			<div><img class="graph" id="humidity" src="assets/img/environment.png" /></div>
 		</div>
 		<div id="raspi">
-			<div><img id="raspipercentages" src="assets/img/raspi.png"/></div>
-			<div><img id="raspiloads" src="assets/img/raspi.png"/></div>
-			<div><img id="cputemp" src="assets/img/raspi.png"/></div>
+			<div id="raspidisplay">
+				<table>
+					<tr><td class="raspihdr">CPU:</td><td class="raspivalue"><span id="raspicpu"></span></td></tr>
+					<tr><td class="raspihdr">Memory:</td><td class="raspivalue"><span id="raspimem"></span></td></tr>
+					<tr><td class="raspihdr">Disk:</td><td class="raspivalue"><span id="raspidisk"></span></td></tr>
+					<tr><td class="raspihdr">Load avg.:</td><td class="raspivalue"><span id="raspiload"></span></td></tr>
+					<tr><td class="raspihdr">CPU Temp:</td><td class="raspivalue"><span id="raspicputemp"></span></td></tr>
+				</table>
+			</div>
+			<div><img class="graph" id="raspipercentages" src="assets/img/raspi.png"/></div>
+			<div><img class="graph" id="raspiloads" src="assets/img/raspi.png"/></div>
+			<div><img class="graph" id="cputemp" src="assets/img/raspi.png"/></div>
 		</div>
 	</div>
 	<script type="text/javascript">

@@ -159,11 +159,23 @@ def background_thread():
 	while True:
 		# Pi State
 		info= psutil.sensors_temperatures()
+		cpu_temp = info['cpu_thermal'][0].current
 		avgs = os.getloadavg()
-		rrdtool.update(cpu, f"N:{psutil.cpu_percent()}:{psutil.virtual_memory().percent}:{psutil.disk_usage('/').percent}:{info['cpu_thermal'][0].current}:{avgs[0]}:{avgs[1]}:{avgs[2]}")
+		load1 = avgs[0]
+		load5 = avgs[1]
+		load15 = avgs[2]
+		cpu_percent = psutil.cpu_percent()
+		mem_percent = psutil.virtual_memory().percent
+		disk_percent = psutil.disk_usage('/').percent
+
+		rrdtool.update(cpu, f"N:{cpu_percent}:{mem_percent}:{disk_percent}:{cpu_temp}:{load1}:{load5}:{load15}")
 
 		# Power
-		rrdtool.update(power, f'N:{ina260.voltage()}:{ina260.current()}:{ina260.power()}')
+		voltage = ina260.voltage()
+		current = ina260.current()
+		powpower = ina260.power()
+
+		rrdtool.update(power, f'N:{voltage}:{current}:{powpower}')
 
 		if (count % slow) == 0:
 			data = bme280.sample(bus, address, calibration_params)
@@ -174,14 +186,25 @@ def background_thread():
 		if (count % wait) == 0:
 			# print("Emit")
 			socketio.emit('environdata', {
+				't': "{:.1f}°C".format(data.temperature),
+				'p': "{:.0f} mbar".format(data.pressure),
+				'h': "{:.1f}%".format(data.humidity),
 				'temperature': create_graph(conf_temperature),
 				'pressure': create_graph(conf_pressure),
 				'humidity': create_graph(conf_humidity),
+				'v' : "{:.1f} V".format(voltage),
+				'c' : "{:.3f} A".format(current),
+				'pow' : "{:.1f} W".format(powpower),
 				'voltage': create_graph(conf_voltage),
 				'current': create_graph(conf_current),
 				'power': create_graph(conf_power),
+				'cpu_percent': "{:.1f} %".format(cpu_percent),
+				'mem_percent': "{:.1f} %".format(mem_percent),
+				'disk_percent': "{:.1f} %".format(disk_percent),
 				'percents': create_graph(conf_percents), 
+				'loadvals': "{:.1f}, {:.1f}, {:.1f}".format(load1,load5,load15),
 				'loads': create_graph(conf_loads),
+				'cputempval': "{:.1f}°C".format(cpu_temp),
 				'cputemp': create_graph(conf_cputemp)
 			}) 
 
