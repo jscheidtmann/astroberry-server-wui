@@ -122,9 +122,9 @@ conf_loads  = [
 	"DEF:l1=%s:load1:AVERAGE"%(cpu),
 	"DEF:l5=%s:load5:AVERAGE"%(cpu),
 	"DEF:l15=%s:load15:AVERAGE"%(cpu),
-	'LINE1:l1#FF0000:Load Avg. 1 min',
-	'LINE1:l5#00FF00:Load Avg. 5 min',
-	'LINE1:l15#0000FF:Load Avg. 15 min'
+	'LINE1:l1#D3D3D3:Load Avg. (1 min)',
+	'LINE1:l5#000000:Load Avg. (5 min)',
+	'LINE1:l15#FF0000:Load Avg. (15 min)'
 ]
 
 conf_cputemp = [
