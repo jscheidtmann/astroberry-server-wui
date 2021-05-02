@@ -18,3 +18,7 @@ print(psutil.cpu_percent())
 avgs = os.getloadavg()
 print(avgs) # avg number of process in run queue in last 1, 5 and 15 min.
 print(avgs[0])
+
+print("CPU%", psutil.cpu_percent())
+print("MEM%", psutil.virtual_memory().percent)
+print("Disk%", psutil.disk_usage('/').percent)
