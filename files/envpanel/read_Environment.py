@@ -18,9 +18,9 @@ power = '/var/local/astroberry/power.rrd'
 if not os.path.exists(env):
     print("Creating environment.rrd")
     rrdtool.create(env, '--start', 'now', '--step', '10s', 
-        'DS:temp:GAUGE:30s:U:U',
-        'DS:pressure:GAUGE:30s:U:U',
-        'DS:humidity:GAUGE:30s:U:U',
+        'DS:temp:GAUGE:30s:-80:80',
+        'DS:pressure:GAUGE:30s:0:3000',
+        'DS:humidity:GAUGE:30s:0:100',
         'RRA:AVERAGE:0.5:1:1d',
         'RRA:AVERAGE:0.5:5m:14d',
         'RRA:AVERAGE:0.5:15m:60d',
@@ -29,11 +29,13 @@ if not os.path.exists(env):
 if not os.path.exists(cpu):
     print("Creating computer.rrd")
     rrdtool.create(cpu, '--start', 'now', '--step', '1s',
-        'DS:cpupercent:GAUGE:5s:U:U',
+        'DS:cpu:GAUGE:5s:0:100',
+        'DS:mem:GAUGE:5s:0:100',
+        'DS:disk:GAUGE:5s:0:100',
         'DS:cputemp:GAUGE:5s:U:U',
-        'DS:load1:GAUGE:5s:U:U',
-        'DS:load5:GAUGE:5s:U:U',
-        'DS:load15:GAUGE:5s:U:U',
+        'DS:load1:GAUGE:5s:0:U',
+        'DS:load5:GAUGE:5s:0:U',
+        'DS:load15:GAUGE:5s:0:U',
         'RRA:AVERAGE:0.5:1:1d',
         'RRA:AVERAGE:0.5:1m:7d',
         'RRA:AVERAGE:0.5:5m:14d',
@@ -113,7 +115,7 @@ while True:
     # Pi State
     info= psutil.sensors_temperatures()
     avgs = os.getloadavg()
-    rrdtool.update(cpu, f"N:{psutil.cpu_percent()}:{info['cpu_thermal'][0].current}:{avgs[0]}:{avgs[1]}:{avgs[2]}")
+    rrdtool.update(cpu, f"N:{psutil.cpu_percent()}:{psutil.virtual_memory().percent}:{psutil.disk_usage('/').percent}:{info['cpu_thermal'][0].current}:{avgs[0]}:{avgs[1]}:{avgs[2]}")
 
     i = i+1
     time.sleep(1)
