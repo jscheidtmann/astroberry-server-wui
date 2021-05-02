@@ -9,7 +9,11 @@ The supported devices are:
 
 # Installation
 
-First check that the 
+First you need to install the following packages in Raspian:
+
+```
+$sudo apt install rrdtool librrd-dev python-rrdtool
+```
 
 Env Panel is based on [Python Flask](http://flask.pocoo.org/) micro-framework. It has a built-in webserver and by default listens on port 8627. Install the pre-requisites:
 
