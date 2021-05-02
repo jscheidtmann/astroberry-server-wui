@@ -4,6 +4,10 @@
 # Run this file using:
 # $ pyhton3 read_Environment.py
 
+# This will create rrd databases in /var/local/astroberry for computer health measures 
+# like Cpu%, Mem%, Diak%, Load for 1,5 and 15 min and sensor reading from different sensors
+# and fill these databases.
+
 # Check, if a RRDTool database exists, if not, create it
 
 import os.path
