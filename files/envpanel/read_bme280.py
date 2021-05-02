@@ -1,3 +1,8 @@
+# Copyright (C) 2021 Jens Scheidtmann
+# I herewith put this file into public domain
+
+# Run this file using:
+# $ pyhton3 read_bme280.py
 
 
 import smbus2
