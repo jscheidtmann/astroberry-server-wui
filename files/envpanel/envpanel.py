@@ -35,20 +35,16 @@ thread = None
 
 
 def background_thread():
-	""" Read environmental data every 5 seconds. 
+	""" Read Raspi status & environmental data. 
 
 	The minimally read sensors are : 
-	- CPU usage ()
-	- memory usage
-	- network usage
+	- CPU, memory and disk usage (percentages)
 	- Load for 1, 5 and 15 minutes
 	
 	If further sensors are attached to the I2C bus:
 	- BME280: Environmental temperature, pressure and relative humidity
 	- INA260: Voltage, Current and Power.
 
-	These are 
-	
 	"""
 	for new_data in 
 		if new_data:
