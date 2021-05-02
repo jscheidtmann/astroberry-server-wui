@@ -13,7 +13,7 @@ from ina260.controller import Controller
 
 c = Controller(address=0x40)
 
-print(c.voltage())
-print(c.current())
-print(c.power())
+print(c.voltage(), "V")
+print(c.current(), "A")
+print(c.power(), "W")
 
