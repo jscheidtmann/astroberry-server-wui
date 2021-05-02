@@ -21,7 +21,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<meta http-equiv="Content-Language" content="en,en-us"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Astronomy</title>
+    <title>Environment & Status</title>
     <link href="assets/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="assets/css/style.css" rel="stylesheet">
     <script src="assets/js/jquery-3.4.1.min.js"></script>
@@ -31,35 +31,68 @@
         $(document).ready(function() {
 	var url = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port: '');
 	var socket = io.connect(url, { path: location.pathname + 'socket.io' });
-	socket.on('emit', function () {
-		client.emit('PING');
-	});
-	socket.on('environdata', function(data) {
+	socket.on('environdata', function(env) {
+			if (env.temperature) {
+				$("#temperature").attr("src", "data:image/png;base64," + env.temperature);
+			}
 
+			if (env.pressure) {
+				$("#pressure").attr("src", "data:image/png;base64," + env.pressure);
+			}
+
+			if (env.humidity) {
+				$("#humidity").attr("src", "data:image/png;base64," + env.humidity);
+			}
+
+			if (env.voltage) {
+				$("#powvoltage").attr("src", "data:image/png;base64," + env.voltage);
+			}
+
+			if (env.current) {
+				$("#powcurrent").attr("src", "data:image/png;base64," + env.current);
+			}
+
+			if (env.power) {
+				$("#powpower").attr("src", "data:image/png;base64," + env.power);
+			}
+
+			if (env.percents) {
+				$("#raspipercentages").attr("src", "data:image/png;base64," + env.percents);
+			}
+
+			if (env.loads) {
+				$("#raspiloads").attr("src", "data:image/png;base64," + env.loads);
+			}
+
+			if (env.cputemp) {
+				$("#cputemp").attr("src", "data:image/png;base64," + env.cputemp);
+			}
 		});
+	});
     </script>
 </head>
-<body>
+<body onload="togglepower()">
 	<div class="panel_container">
 		<h1>Environment Information</span></h1>
 		<div id="displayctl">
-			<button id="toggleenv" onclick="toggleenviron();">Environment</button>
 			<button id="togglepower" onclick="togglepower();">Power</button>
+			<button id="toggleenv" onclick="toggleenviron();">Environment</button>
 			<button id="toggleraspi" onclick="toggleraspi();">Raspberry Pi</button>
 		</div>
-		<div id="environment">
-			<div><img id="environtemperature" src="assets/img/environment.png" /></div>
-			<div><img id="environpressure" src="assets/img/environment.png" /></div>
-			<div><img id="environhumidity" src="assets/img/environment.png" /></div>
-		</div>
 		<div id="power">
-			<div><img id="powervoltage" src="assets/img/power.png"/></div>
-			<div><img id="powercurrent" src="assets/img/power.png"/></div>
-			<div><img id="powerpower" src="assets/img/power.png"/></div>
+			<div><img id="powvoltage" src="assets/img/power.png"/></div>
+			<div><img id="powcurrent" src="assets/img/power.png"/></div>
+			<div><img id="powpower" src="assets/img/power.png"/></div>
+		</div>
+		<div id="environment">
+			<div><img id="temperature" src="assets/img/environment.png" /></div>
+			<div><img id="pressure" src="assets/img/environment.png" /></div>
+			<div><img id="humidity" src="assets/img/environment.png" /></div>
 		</div>
 		<div id="raspi">
-			<div><img id="raspipercentage" src="assets/img/raspi.png"/></div>
-			<div><img id="raspiload" src="assets/img/raspi.png"/></div>
+			<div><img id="raspipercentages" src="assets/img/raspi.png"/></div>
+			<div><img id="raspiloads" src="assets/img/raspi.png"/></div>
+			<div><img id="cputemp" src="assets/img/raspi.png"/></div>
 		</div>
 	</div>
 	<script type="text/javascript">
