@@ -38,10 +38,10 @@ def background_thread():
 	""" Read environmental data every 5 seconds. 
 
 	The minimally read sensors are : 
-	- CPU usage
+	- CPU usage ()
 	- memory usage
 	- network usage
-	- CPU & GPU temperature
+	- Load for 1, 5 and 15 minutes
 	
 	If further sensors are attached to the I2C bus:
 	- BME280: Environmental temperature, pressure and relative humidity
