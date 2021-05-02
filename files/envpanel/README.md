@@ -4,7 +4,7 @@ Environment Panel is a simple web application to present health status informati
 
 The supported devices are:
 - An BME280 environmental sensor, reading temperature, pressure and relative humidity.
-- An INA260
+- An INA260 reading voltage, current and power.
 
 
 # Installation
