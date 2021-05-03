@@ -43,31 +43,6 @@ power = '/var/local/astroberry/power.rrd'
 
 duration="now-10h"
 
-#########
-# BME280
-
-# Environmental readings (temperature, pressure and humidity) are collected every ten seconds.
-
-import bme280
-
-port = 1
-address = 0x76  
-bus = smbus2.SMBus(port)
-
-calibration_params = bme280.load_calibration_params(bus, address)
-
-#########
-# INA260
-
-from ina260.controller import Controller
-
-# Read Voltage and Current readings from hte ina260 board, that is connected via I2C to your RaspPi
-# 0x40 is the standard address used by the device, if you're using a different adress, change it here.
-# Check which address your device is using by running:
-# $ i2cdetect -y 1
-
-ina260 = Controller(address=0x40)
-
 ############
 # Graph configurations
 
@@ -134,11 +109,10 @@ conf_cputemp = [
 ]
 
 ###############
-# Store values and emit graphs
+# Emit graphs
 
 def background_thread():
-	""" Read Raspi status & environmental data. 
-
+	""" 
 	The minimally read sensors are : 
 	- CPU, memory and disk usage of '/' (as percentages)
 	- Load for 1, 5 and 15 minutes
@@ -152,63 +126,36 @@ def background_thread():
 	"""
 
 	# Every ten seconds:
-	wait = 10
-	slow = 10
-	sleep_time = 1.0
-	count = 0
+	sleep_time = 10
 	while True:
-		# Pi State
-		info= psutil.sensors_temperatures()
-		cpu_temp = info['cpu_thermal'][0].current
-		avgs = os.getloadavg()
-		load1 = avgs[0]
-		load5 = avgs[1]
-		load15 = avgs[2]
-		cpu_percent = psutil.cpu_percent()
-		mem_percent = psutil.virtual_memory().percent
-		disk_percent = psutil.disk_usage('/').percent
+		# print("Emit")
+		envdata = rrdtool.lastupdate(env)
+		compdata = rrdtool.lastupdate(cpu)
+		pdata= rrdtool.lastupdate(power)
 
-		rrdtool.update(cpu, f"N:{cpu_percent}:{mem_percent}:{disk_percent}:{cpu_temp}:{load1}:{load5}:{load15}")
+		socketio.emit('environdata', {
+			't': "{:.1f}°C".format(envdata['ds']['temp']),
+			'p': "{:.0f} mbar".format(envdata['ds']['pressure']),
+			'h': "{:.1f}%".format(envdata['ds']['humidity']),
+			'temperature': create_graph(conf_temperature),
+			'pressure': create_graph(conf_pressure),
+			'humidity': create_graph(conf_humidity),
+			'v' : "{:.1f} V".format(pdata['ds']['voltage']),
+			'c' : "{:.3f} A".format(pdata['ds']['current']),
+			'pow' : "{:.1f} W".format(pdata['ds']['power']),
+			'voltage': create_graph(conf_voltage),
+			'current': create_graph(conf_current),
+			'power': create_graph(conf_power),
+			'cpu_percent': "{:.1f} %".format(compdata['ds']['cpu']),
+			'mem_percent': "{:.1f} %".format(compdata['ds']['mem']),
+			'disk_percent': "{:.1f} %".format(compdata['ds']['disk']),
+			'percents': create_graph(conf_percents), 
+			'loadvals': "{:.1f}, {:.1f}, {:.1f}".format(compdata['ds']['load1'],compdata['ds']['load5'],compdata['ds']['load15']),
+			'loads': create_graph(conf_loads),
+			'cputempval': "{:.1f}°C".format(compdata['ds']['cputemp']),
+			'cputemp': create_graph(conf_cputemp)
+		}) 
 
-		# Power
-		voltage = ina260.voltage()
-		current = ina260.current()
-		powpower = ina260.power()
-
-		rrdtool.update(power, f'N:{voltage}:{current}:{powpower}')
-
-		if (count % slow) == 0:
-			data = bme280.sample(bus, address, calibration_params)
-
-			# print(f"{data.timestamp}: t={data.temperature}, p={data.pressure}, h={data.humidity}")
-			rrdtool.update(env, f'N:{data.temperature}:{data.pressure}:{data.humidity}')
-
-		if (count % wait) == 0:
-			# print("Emit")
-			socketio.emit('environdata', {
-				't': "{:.1f}°C".format(data.temperature),
-				'p': "{:.0f} mbar".format(data.pressure),
-				'h': "{:.1f}%".format(data.humidity),
-				'temperature': create_graph(conf_temperature),
-				'pressure': create_graph(conf_pressure),
-				'humidity': create_graph(conf_humidity),
-				'v' : "{:.1f} V".format(voltage),
-				'c' : "{:.3f} A".format(current),
-				'pow' : "{:.1f} W".format(powpower),
-				'voltage': create_graph(conf_voltage),
-				'current': create_graph(conf_current),
-				'power': create_graph(conf_power),
-				'cpu_percent': "{:.1f} %".format(cpu_percent),
-				'mem_percent': "{:.1f} %".format(mem_percent),
-				'disk_percent': "{:.1f} %".format(disk_percent),
-				'percents': create_graph(conf_percents), 
-				'loadvals': "{:.1f}, {:.1f}, {:.1f}".format(load1,load5,load15),
-				'loads': create_graph(conf_loads),
-				'cputempval': "{:.1f}°C".format(cpu_temp),
-				'cputemp': create_graph(conf_cputemp)
-			}) 
-
-		count = count+1
 		socketio.sleep(sleep_time)	
 
 def create_graph(conf):
@@ -232,43 +179,9 @@ def handle_connect():
 
 if __name__ == '__main__':
 	# TODO: Create rrdtool files, not overwriting them
-	if not os.path.exists(env):
-		print("Creating environment.rrd")
-		rrdtool.create(env, '--start', 'now', '--step', '10s', 
-			'DS:temp:GAUGE:30s:-80:80',
-			'DS:pressure:GAUGE:30s:0:3000',
-			'DS:humidity:GAUGE:30s:0:100',
-			'RRA:AVERAGE:0.5:1:1d',
-			'RRA:AVERAGE:0.5:5m:14d',
-			'RRA:AVERAGE:0.5:15m:60d',
-			'RRA:AVERAGE:0.5:30m:180d')
-
-	if not os.path.exists(cpu):
-		print("Creating computer.rrd")
-		rrdtool.create(cpu, '--start', 'now', '--step', '1s',
-			'DS:cpu:GAUGE:5s:0:100',
-			'DS:mem:GAUGE:5s:0:100',
-			'DS:disk:GAUGE:5s:0:100',
-			'DS:cputemp:GAUGE:5s:U:U',
-			'DS:load1:GAUGE:5s:0:U',
-			'DS:load5:GAUGE:5s:0:U',
-			'DS:load15:GAUGE:5s:0:U',
-			'RRA:AVERAGE:0.5:1:1d',
-			'RRA:AVERAGE:0.5:1m:7d',
-			'RRA:AVERAGE:0.5:5m:14d',
-			'RRA:AVERAGE:0.5:15m:60d',
-			'RRA:AVERAGE:0.5:30m:180d')
-
-	if not os.path.exists(power):
-		print("Creating power.rrd")
-		rrdtool.create(power, '--start', 'now', '--step', '1s',
-			'DS:voltage:GAUGE:5s:U:U',
-			'DS:current:GAUGE:5s:U:U',
-			'DS:power:GAUGE:5s:U:U',
-			'RRA:AVERAGE:0.5:1:1d',
-			'RRA:AVERAGE:0.5:5m:14d',
-			'RRA:AVERAGE:0.5:15m:60d',
-			'RRA:AVERAGE:0.5:30m:180d')
+	if not os.path.exists(env) or not os.path.exists(cpu) or not os.path.exists(power):
+		print("Can't find RRDtool databases for astroberry. (Check /var/local/astroberry)")
+		sys.exit(1)
 
 	try:
 		socketio.run(app, host='0.0.0.0', port = 8627, debug=False)
