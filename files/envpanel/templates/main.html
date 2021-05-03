@@ -32,113 +32,122 @@
         $(document).ready(function() {
 	var url = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port: '');
 	var socket = io.connect(url, { path: location.pathname + 'socket.io' });
-	socket.on('emit', function () {
-		client.emit('PING');
-	});
-	socket.on('healthdata', function(data) {
-                $("#polaris_next_transit").html(data.polaris_next_transit);
-                $("#polaris_alt").html(data.polaris_alt);
-                $("#moon_phase").html(data.moon_phase + " (" + data.moon_light + "%)");
-                $("#moon_rise").html(data.moon_rise);
-                $("#moon_transit").html(data.moon_transit);
-                $("#moon_set").html(data.moon_set);
-                $("#moon_az").html(data.moon_az);
-                $("#moon_alt").html(data.moon_alt);
-                $("#moon_ra").html(data.moon_ra);
-                $("#moon_dec").html(data.moon_dec);
-                $(".moon_new").html(data.moon_new);
-                $("#moon_full").html(data.moon_full);
-                $("#sun_at_start").html(data.sun_at_start);
-                $("#sun_ct_start").html(data.sun_ct_start);
-                $("#sun_rise").html(data.sun_rise);
-                $("#sun_transit").html(data.sun_transit);
-                $("#sun_set").html(data.sun_set);
-                $("#sun_ct_end").html(data.sun_ct_end);
-                $("#sun_at_end").html(data.sun_at_end);
-                $("#sun_az").html(data.sun_az);
-                $("#sun_alt").html(data.sun_alt);
-                $("#sun_ra").html(data.sun_ra);
-                $("#sun_dec").html(data.sun_dec);
-                $("#sun_equinox").html(data.sun_equinox);
-                $(".sun_solstice").html(data.sun_solstice);
-                $("#mercury_rise").html(data.mercury_rise);
-                $("#mercury_transit").html(data.mercury_transit);
-                $("#mercury_set").html(data.mercury_set);
-                $("#mercury_az").html(data.mercury_az);
-                $("#mercury_alt").html(data.mercury_alt);
-                $("#venus_rise").html(data.venus_rise);
-                $("#venus_transit").html(data.venus_transit);
-                $("#venus_set").html(data.venus_set);
-                $("#venus_az").html(data.venus_az);
-                $("#venus_alt").html(data.venus_alt);
-                $("#mars_rise").html(data.mars_rise);
-                $("#mars_transit").html(data.mars_transit);
-                $("#mars_set").html(data.mars_set);
-                $("#mars_az").html(data.mars_az);
-                $("#mars_alt").html(data.mars_alt);
-                $("#jupiter_rise").html(data.jupiter_rise);
-                $("#jupiter_transit").html(data.jupiter_transit);
-                $("#jupiter_set").html(data.jupiter_set);
-                $("#jupiter_az").html(data.jupiter_az);
-                $("#jupiter_alt").html(data.jupiter_alt);
-                $("#saturn_rise").html(data.saturn_rise);
-                $("#saturn_transit").html(data.saturn_transit);
-                $("#saturn_set").html(data.saturn_set);
-                $("#saturn_az").html(data.saturn_az);
-                $("#saturn_alt").html(data.saturn_alt);
-                $("#uranus_rise").html(data.uranus_rise);
-                $("#uranus_transit").html(data.uranus_transit);
-                $("#uranus_set").html(data.uranus_set);
-                $("#uranus_az").html(data.uranus_az);
-                $("#uranus_alt").html(data.uranus_alt);
-                $("#neptune_rise").html(data.neptune_rise);
-                $("#neptune_transit").html(data.neptune_transit);
-                $("#neptune_set").html(data.neptune_set);
-                $("#neptune_az").html(data.neptune_az);
-                $("#neptune_alt").html(data.neptune_alt);
+	socket.on('environdata', function(env) {
+			$("#powervolts").html(env.v);
+			$("#powercurrent").html(env.c);
+			$("#powerpower").html(env.pow);
+			$("#envtemp").html(env.t);
+			$("#envpressure").html(env.p);
+			$("#envhumidity").html(env.h);
+			$("#raspicpu").html(env.cpu_percent);
+			$("#raspimem").html(env.mem_percent);
+			$("#raspidisk").html(env.disk_percent);
+			$("#raspiload").html(env.loadvals);
+			$("#raspicputemp").html(env.cputempval);
 
-			});
+			if (env.voltage) {
+				$("#powvoltage").attr("src", "data:image/png;base64," + env.voltage);
+			}
+
+			if (env.current) {
+				$("#powcurrent").attr("src", "data:image/png;base64," + env.current);
+			}
+
+			if (env.power) {
+				$("#powpower").attr("src", "data:image/png;base64," + env.power);
+			}
+
+			if (env.temperature) {
+				$("#temperature").attr("src", "data:image/png;base64," + env.temperature);
+			}
+
+			if (env.pressure) {
+				$("#pressure").attr("src", "data:image/png;base64," + env.pressure);
+			}
+
+			if (env.humidity) {
+				$("#humidity").attr("src", "data:image/png;base64," + env.humidity);
+			}
+
+			if (env.percents) {
+				$("#raspipercentages").attr("src", "data:image/png;base64," + env.percents);
+			}
+
+			if (env.loads) {
+				$("#raspiloads").attr("src", "data:image/png;base64," + env.loads);
+			}
+
+			if (env.cputemp) {
+				$("#cputemp").attr("src", "data:image/png;base64," + env.cputemp);
+			}
 		});
+	});
     </script>
 </head>
-<body>
+<body onload="toggleraspi()">
 	<div class="panel_container">
-		<h1>Raspberry Pi Status and Environment</span></h1>
+		<h1>Environment Information</span></h1>
 		<div id="displayctl">
-			<button id="toggleraspi" onclick="toggleraspi();">RasPi</button>
+			<button id="toggleraspi" onclick="toggleraspi();">Raspberry Pi</button>
 			<button id="togglepower" onclick="togglepower();">Power</button>
-			<button id="toggleenviron" onclick="toggleenviron();">Environment</button>
-		</div>
-		<div id="raspi">
-			<div id="rrdpercent">
-				<img id="percents" src="assets/img/percents.png" />
-			</div>
-			<h2>Raspberry PI Status</h2>
+			<button id="toggleenv" onclick="toggleenviron();">Environment</button>
 		</div>
 		<div id="power">
-			<img src="assets/img/power.png"/>
-			<h2>Power Consumption</h2>
+			<div id="powerdisplay">
+				<table>
+					<tr>
+						<td class="powerdata"><span id="powervolts"></span></td>
+						<td class="powerdata"><span id="powercurrent"></span></td>
+						<td class="powerdata"><span id="powerpower"></span></td>
+					</tr>
+				</table>	
+			</div>
+			<div><img class="graph" id="powvoltage" src="assets/img/power.png"/></div>
+			<div><img class="graph" id="powcurrent" src="assets/img/power.png"/></div>
+			<div><img class="graph" id="powpower" src="assets/img/power.png"/></div>
 		</div>
-		<div id="environ">
-			<img src="assets/img/environment.png"/>
-			<h2>Environment</h2>
+		<div id="environment">
+			<div id="environmentdisplay">
+				<table>
+				<tr><td class="envhdr">Temperature:</td><td class="envvalue"><span id="envtemp"></span></td></tr>
+				<tr><td class="envhdr">Pressure:</td><td class="envvalue"><span id="envpressure"></span></td></tr>
+				<tr><td class="envhdr">Humidity:</td><td class="envvalue"><span id="envhumidity"></span></td></tr>
+				</table>
+			</div>
+			<div><img class="graph" id="temperature" src="assets/img/environment.png" /></div>
+			<div><img class="graph" id="pressure" src="assets/img/environment.png" /></div>
+			<div><img class="graph" id="humidity" src="assets/img/environment.png" /></div>
+		</div>
+		<div id="raspi">
+			<div id="raspidisplay">
+				<table>
+					<tr><td class="raspihdr">CPU:</td><td class="raspivalue"><span id="raspicpu"></span></td></tr>
+					<tr><td class="raspihdr">Memory:</td><td class="raspivalue"><span id="raspimem"></span></td></tr>
+					<tr><td class="raspihdr">Disk:</td><td class="raspivalue"><span id="raspidisk"></span></td></tr>
+					<tr><td class="raspihdr">Load avg.:</td><td class="raspivalue"><span id="raspiload"></span></td></tr>
+					<tr><td class="raspihdr">CPU Temp:</td><td class="raspivalue"><span id="raspicputemp"></span></td></tr>
+				</table>
+			</div>
+			<div><img class="graph" id="raspipercentages" src="assets/img/raspi.png"/></div>
+			<div><img class="graph" id="raspiloads" src="assets/img/raspi.png"/></div>
+			<div><img class="graph" id="cputemp" src="assets/img/raspi.png"/></div>
 		</div>
 	</div>
 	<script type="text/javascript">
-	function toggleraspi() {
-			document.getElementById("raspi").style.display="block";
+	function toggleenviron() {
+			document.getElementById("environment").style.display="block";
 			document.getElementById("power").style.display="none";
-			document.getElementById("environ").style.display="none";
+			document.getElementById("raspi").style.display="none";
 	}
 	function togglepower() {
-			document.getElementById("raspi").style.display="none";
+			document.getElementById("environment").style.display="none";
 			document.getElementById("power").style.display="block";
-			document.getElementById("environ").style.display="none";
-	}
-	function toggleenviron() {
 			document.getElementById("raspi").style.display="none";
+	}
+	function toggleraspi() {
+			document.getElementById("environment").style.display="none";
 			document.getElementById("power").style.display="none";
-			document.getElementById("environ").style.display="block";
+			document.getElementById("raspi").style.display="block";
 	}
 	</script>
 </body>

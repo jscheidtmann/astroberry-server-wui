@@ -1,12 +1,35 @@
-# Copyright (C) 2021 Jens Scheidtmann
-# I herewith put this file into public domain
+#!/usr/bin/env python3
+# coding=utf-8
 
-# Run this file using:
-# $ pyhton3 read_Environment.py
+#  Copyright(c) 2017 Radek Kaczorek  <rkaczorek AT gmail DOT com>
+#  Copyright(c) 2021 Jens Scheidtmann <Jens.Scheidtmann AT gmail DOT com>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License version 3 as published by the Free Software Foundation.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with this library; see the file LICENSE.  If not, write to
+# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+# Boston, MA 02110-1301, USA.
 
+##################################################################
+# This program collects and stores metrics of your Astroberry
+
+# You can run this file using:
+# $ pyhton3 envpanelservice.py
+#
+# But it is intended to be run as a collection service from systemd.
+# See README.md on how to configure that.
+#
 # This will create rrd databases in /var/local/astroberry for computer health measures 
-# like Cpu%, Mem%, Diak%, Load for 1,5 and 15 min and sensor reading from different sensors
-# and fill these databases.
+# like Cpu%, Mem%, Disk%, Load for 1,5 and 15 min and sensor reading from different sensors
+# and save these in RRD databases.
 
 # Check, if a RRDTool database exists, if not, create it
 
@@ -101,10 +124,11 @@ import os
 ############################
 # 
 # ad infinitum
-#  
+# 
+wait_time = 1 # second
 i = 0
 while True:
-    # Every 10 power samples, sample once the environment.
+    # Every 10 samples, sample once the environment.
     if i % 10 == 0: 
         # the sample method will take a single reading and return a
         # compensated_reading object
@@ -118,9 +142,19 @@ while True:
 
     # Pi State
     info= psutil.sensors_temperatures()
+    cpu_temp = info['cpu_thermal'][0].current
+
     avgs = os.getloadavg()
-    rrdtool.update(cpu, f"N:{psutil.cpu_percent()}:{psutil.virtual_memory().percent}:{psutil.disk_usage('/').percent}:{info['cpu_thermal'][0].current}:{avgs[0]}:{avgs[1]}:{avgs[2]}")
+    load1 = avgs[0]
+    load5 = avgs[1]
+    load15 = avgs[2]
+    
+    cpu_percent = psutil.cpu_percent()
+    mem_percent = psutil.virtual_memory().percent
+    disk_percent = psutil.disk_usage('/').percent
+
+    rrdtool.update(cpu, f"N:{cpu_percent}:{mem_percent}:{disk_percent}:{cpu_temp}:{load1}:{load5}:{load15}")
 
     i = i+1
-    time.sleep(1)
+    time.sleep(wait_time)
 

@@ -1,0 +1,13 @@
+[Unit]
+Description=Environment Panel Collector Service
+After=multi-user.target
+
+[Service]
+Type=idle
+User=astroberry
+ExecStart=/usr/bin/python3 /var/www/envpanel/envpanelcollect.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
