@@ -1,5 +1,5 @@
 [Unit]
-Description=Env Panel
+Description=Environment Panel
 After=multi-user.target
 
 [Service]
